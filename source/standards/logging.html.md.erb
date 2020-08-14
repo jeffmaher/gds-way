@@ -33,7 +33,9 @@ queryable store. Practical retention periods for short-term queryable logs are:
 * no more than 7 days for non-production environments
 * no more than 30 days production environments
 
-You should consider storing security and audit events for up to a year.
+You should consider storing security and audit events for up to a year, this is
+because the average MTTD (Mean Time to Detect) is 206 days (over 6 months) to
+identify a breach, according to a [2019 IBM data breach study].
 
 Your product may have legal or other requirements determining how long you
 should store logs. For example, the
@@ -45,8 +47,10 @@ easily accessible logs and 12 months of archived logs.
 When storing logs, you should focus on long-term durability for compliance
 reasons or to identify long-term performance trends.
 
-[Splunk] is appropriate for up to a year of storage, if you require more,
-consider archiving to [Amazon Web Services (AWS)] S3.
+Splunk is appropriate for up to a year of storage. If you require more,
+Splunk can be configured to [archive data to your own S3 bucket] - this saves
+files in a proprietary format so consider archiving to S3 in human-readable
+files using your own process.
 
 ## Log shipping
 
@@ -75,112 +79,29 @@ are in a structured format.
 [Splunk] automatically parses JSON log lines. Other formats may need [specific
 field extracts] configured in Splunk.
 
-### Structured logging with Logstash
+For interoperability with pre-built apps and alerting, it is beneficial to align
+your logs to the [Splunk CIM (Common Information Model)].
 
-[Logstash] can be used to parse structured fields from unstructured logs in
-order to make them easier to query.
+The [`Web` CIM] is most commonly used at GDS - it specifies particular field
+names for data, for example:
 
-You should adopt a standard set of field names for your logs and use naming
-conventions, as documented in
-[LOGSTASH-675](https://logstash.jira.com/browse/LOGSTASH-675). In particular:
+  - `http_user_agent` for the client's user agent
+  - `src` for the source IP address
+  - `dest` for the origin server IP address
 
-  - the only guaranteed fields are `@timestamp` and `@version`
-  - `@version` is always `1`
-  - `@timestamp` is always an ISO-8601 formatted timestamp
-  - you should not prefix field names with `@fields.`
+## Access to Splunk
 
-We should use the [elastic beats naming conventions]. In particular:
-
-  - fields are lower case and `snake_case`
-  - use dots to group related metrics, for example `cpu.user` and `cpu.system`
-
-An alternative to using dots to group related metrics is to use a
-nested document. For example: `"cpu": {"user":30.0,"system":40.0}`
-
-#### HTTP fields
-
-Lots of fields related to http access logs should be grouped under the
-`access` namespace.  You do not need to provide every field,
-and some may be more convenient than others (for example, it might be
-easier to produce `url` rather than `path` and `query_string` from
-nginx access logs, but `path` and `query_string` might be easier from
-Rails logs).  You may wish to omit or anonymise certain fields for
-policy reasons.
-
-If a field has no value, you can omit it.  If this is difficult to do,
-you can use the value `"-"` instead.  This may be more convenient, for
-example, when writing grok filters on access logs.
-
-  - `agent`
-      - type: string
-      - meaning: HTTP User-Agent header contents
-  - `body_sent.bytes`
-      - type: integer
-      - meaning: actual number of bytes sent in the response body.
-        (Not necessarily the same as the Content-length header.)
-  - `host`
-      - type: string
-      - meaning: HTTP Host header
-  - `method`
-      - type: string
-      - meaning: HTTP method used in request
-      - examples: `"GET"`, `"POST"`
-  - `path`
-      - type: string
-      - meaning: HTTP path, *excluding* query string
-      - example: `/dir1/dir2/resource`
-  - `query_string`
-      - type: string
-      - meaning: HTTP query string, *excluding* initial question mark
-        character
-      - example: `lang=en&q=hello`
-  - `referrer` (not `referer`)
-      - type: string
-      - meaning: HTTP Referer header contents
-  - `response_code`
-      - type: integer
-      - meaning: HTTP status code
-      - If the status code does not exist for some reason (say,
-        because the connection was closed or reset before the status
-        was sent) then a special numerical value can be used, or the
-        field can be dropped.
-      - examples: `200`, `404`
-  - `url`
-      - type: string
-      - meaning: requested URL, relative to server root, including
-        query string if provided
-      - example: `/dir1/dir2/resource?lang=en&q=hello`
-  - `user_agent`
-      - type: object
-      - meaning: parsed fields representing user agent.  Generated
-        using logstash `useragent` filter, or elasticsearch
-        ingest-user-agent plugin.
-  - `user_name`
-      - type: string
-      - meaning: user name of authenticated user.  In particular, this
-        refers to HTTP authentication such as basic auth, rather than
-        application-level authentication.
-
-Example:
-
-```json
-{
-  "@version": 1,
-  "@timestamp": "2017-07-11T15:49:00Z",
-  "access": {
-    "response_code": 404,
-    "method": "GET",
-    "url": "/foo/bar?q=hello"
-  }
-}
-```
+Access control for GDS users is managed by the IT Service Desk, use the
+[helpdesk] to request access. If you're unsure what role you should be
+requesting, ask in the `#cyber-security-help` Slack channel.
 
 ## Advice for particular frameworks or platforms
 
 ### Dropwizard
 
 The [dropwizard-logstash] library will set things up for you using the
-standard names.
+standard names. Splunk will be able to ingest this format but the ingestion
+route may differ as Splunk Cloud does not support syslog inputs.
 
 ### Cloud Foundry
 
@@ -191,19 +112,19 @@ The [GOV.UK PaaS Logging] documentation will help you configure Logit and
 drain logs into it from your app.
 
 
+[helpdesk]: https://gdshelpdesk.digital.cabinet-office.gov.uk
 [Splunk]: https://gds.splunkcloud.com
+[archive data to your own S3 bucket]: https://docs.splunk.com/Documentation/SplunkCloud/latest/Admin/DataSelfStorage?ref=hk#Configure_self_storage_locations
+[Splunk CIM (Common Information Model)]: https://docs.splunk.com/Documentation/CIM/latest/User/Overview
+[`Web` CIM]: https://docs.splunk.com/Documentation/CIM/latest/User/Web
+[2019 IBM data breach study]: https://newsroom.ibm.com/2019-07-23-IBM-Study-Shows-Data-Breach-Costs-on-the-Rise-Financial-Impact-Felt-for-Years
 [specific field extracts]: https://docs.splunk.com/Documentation/Splunk/latest/Data/Extractfieldsfromfileswithstructureddata
 [broker documentation]: https://github.com/alphagov/tech-ops/blob/master/cyber-security/components/csls-splunk-broker/docs/user-guide.md
 [Centralised Security Logging Service (CSLS)]: https://github.com/alphagov/centralised-security-logging-service
 [dropwizard-logstash]: https://github.com/alphagov/dropwizard-logstash
-[elastic beats naming conventions]: https://www.elastic.co/guide/en/beats/devguide/current/event-conventions.html
 [Logit]: https://logit.io/
 [GOV.UK PaaS Logging]: https://docs.cloud.service.gov.uk/monitoring_apps.html#set-up-the-logit-io-log-management-service
 [ELK (Elasticsearch, Logstash and Kibana)]: https://www.elastic.co/elk-stack
 [Reliability Engineering documentation]: https://reliability-engineering.cloudapps.digital/#logging
 [Payment Card Industry Data Security Standard (PCI-DSS)]: https://www.pcisecuritystandards.org/pci_security/
-[Amazon Web Services (AWS)]: https://aws.amazon.com/
 [Amazon CloudWatch]: https://aws.amazon.com/cloudwatch/
-[Elastic Beats family of tools]: https://www.elastic.co/products/beats
-[Elasticsearch and Amazon Cloudwatch]: https://www.elastic.co/guide/en/logstash-versioned-plugins/versioned_plugin_docs/v3.0.7-plugins-outputs-cloudwatch.html#v3.0.7-plugins-outputs-cloudwatch-options
-[Logstash]: https://www.elastic.co/products/logstash
