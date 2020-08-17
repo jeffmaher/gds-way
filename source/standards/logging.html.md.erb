@@ -69,6 +69,15 @@ you could combine Splunk with Amazon Cloudwatch and also archive to S3.
 CSLS utilises Amazon Kinesis and can persist logs in the event that Splunk is
 unavailable and will resume sending data when Splunk is available again.
 
+Splunk Cloud's recommended input is the HTTP Event Collector (HEC) - CSLS uses
+this.
+
+Note: Splunk Cloud does not support syslog, you may need a forwarder if syslog
+is your only output option:
+
+* [Logstash HTTP output] and [HEC]
+* [Fluentd to HEC]
+
 ## Structured logging
 
 In order to allow for rich querying of log data you should ensure that your logs
@@ -100,8 +109,7 @@ requesting, ask in the `#cyber-security-help` Slack channel.
 ### Dropwizard
 
 The [dropwizard-logstash] library will set things up for you using the
-standard names. Splunk will be able to ingest this format but the ingestion
-route may differ as Splunk Cloud does not support syslog inputs.
+standard names. Splunk will be able to ingest this format.
 
 ### Cloud Foundry
 
@@ -128,3 +136,6 @@ drain logs into it from your app.
 [Reliability Engineering documentation]: https://reliability-engineering.cloudapps.digital/#logging
 [Payment Card Industry Data Security Standard (PCI-DSS)]: https://www.pcisecuritystandards.org/pci_security/
 [Amazon CloudWatch]: https://aws.amazon.com/cloudwatch/
+[Logstash HTTP output]: https://www.elastic.co/guide/en/logstash/current/plugins-outputs-http.html
+[HEC]: https://docs.splunk.com/Documentation/Splunk/latest/Data/HECExamples
+[Fluentd to HEC]: https://github.com/splunk/fluent-plugin-splunk-hec
