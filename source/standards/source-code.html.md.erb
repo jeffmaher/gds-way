@@ -13,9 +13,9 @@ At GDS, we follow the principles set out in the Service Manual for managing the 
 
 ## Publish open source code
 
-Wherever possible, we [make our source code open and reusable][]. This means other government departments and people in outside organisations can benefit from our work. We also maintain several open source projects developed for use on GOV.UK and with other work we do, such as the [Puppet module for go-audit][] or the [GDS Operations open source web site][].
+Wherever possible, we make our source code open and reusable. This means other government departments and people in outside organisations can benefit from our work. We also maintain several open source projects developed for use on GOV.UK and with other work we do, such as the [Puppet module for go-audit][] or the [GDS Operations open source web site][].
 
-It’s not always appropriate to open code. There are situations [when you should keep some data and code closed][], for example:
+It’s not always appropriate to open code. There are sometimes grounds for [keeping some data and code closed][], for example:
 
 - keys and credentials
 - algorithms used to detect fraud
@@ -59,7 +59,7 @@ You can also consider backing up your Git repositories to another location (this
 
 ### How to retire applications
 
-If an application is no longer used in production, you should [archive](https://help.github.com/articles/archiving-repositories/) its repository.
+If an application is no longer used in production, you should [archive its repository](https://help.github.com/articles/archiving-repositories/).
 
 Update the application's README to explain why the repository has been archived, and link to a new location if the application has been superseded.
 
@@ -90,8 +90,8 @@ being kinder to our future selves.
 #### Content
 
 A good commit message briefly summarises the "what" for scanning purposes, but
-also includes the "why". If the "what" in the message isn't enough, the diff is
-there as a fallback. This isn't true for the "why" of a change - this can be
+also includes the "why". If the "what" in the message is not enough, the diff is
+there as a fallback. This is not true for the "why" of a change - this can be
 much harder or impossible to reconstruct, but is often of great significance.
 
 ##### Example
@@ -162,7 +162,7 @@ commands like git merge and git revert.
 
 You may often choose to work on a particular feature on a "feature branch"
 rather than directly on `master`. Indeed, given how cheap branches are in Git,
-this is [positively encouraged](http://git-scm.com/book/en/Git-Branching-Basic-Branching-and-Merging).
+[using branches](http://git-scm.com/book/en/Git-Branching-Basic-Branching-and-Merging) is positively encouraged.
 
 You are encouraged to make liberal use of Git's [history rewriting
 features](http://git-scm.com/book/en/Git-Tools-Rewriting-History) while working
@@ -172,9 +172,9 @@ will make sense to your fellow developers. In particular, you may find
 commits and use git rebase master instead. However, you should not rewrite commits
 that have been pushed unless you:
 
-  * are **very sure** that no-one else will be affected by you rewriting the
+  * are very sure that no-one else will be affected by you rewriting the
     branch history
-  * have an Extremely Good Reason. For example: someone has committed
+  * have an extremely good reason. For example: someone has committed
     sensitive information (personally identifiable data, passwords and suchlike)
     and it needs purging from history
 
@@ -192,7 +192,7 @@ branch in the repository history. This advice may be freely ignored for smaller
 local feature branches for which a fast-forward merge will look like any other
 routine development work on `master`.
 
-### Don't use `git push -f`, use `--force-with-lease` instead
+### Do not use `git push -f`, use `--force-with-lease` instead
 
 Force pushing in git is a subject that attracts all kinds of religious
 battles. This advice is not about the merits of force pushing. This is about how
@@ -216,7 +216,7 @@ $ git push --force-with-lease
 
 `--force-with-lease` [refuses to update a
 branch](https://developer.atlassian.com/blog/2015/04/force-with-lease/) unless
-it is the state that we expect; i.e. nobody has updated the remote branch.
+it is the state that we expect, which is that nobody has updated the remote branch.
 
 [make our source code open and reusable]: https://www.gov.uk/service-manual/technology/making-source-code-open-and-reusable
 [Puppet module for go-audit]: https://github.com/gds-operations/puppet-goaudit
@@ -230,7 +230,7 @@ it is the state that we expect; i.e. nobody has updated the remote branch.
 [CircleCI]: https://circleci.com/
 [Jenkins]: https://jenkins.io/
 [Go repository]: https://golang.org/CONTRIBUTORS
-[when you should keep some data and code closed]: https://www.gov.uk/government/publications/open-source-guidance/when-code-should-be-open-or-closed
+[keeping some data and code closed]: https://www.gov.uk/government/publications/open-source-guidance/when-code-should-be-open-or-closed
 [how to open previously closed code and your responsibilities for maintaining open code]: https://www.gov.uk/service-manual/technology/making-source-code-open-and-reusable
 [Open Government Licence (OGL)]: https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/
 [Go repository]: https://golang.org/CONTRIBUTORS

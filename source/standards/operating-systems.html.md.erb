@@ -1,6 +1,6 @@
 ---
 title: Operating systems for virtual machines
-last_reviewed_on: 2020-04-24
+last_reviewed_on: 2020-07-24
 review_in: 3 months
 ---
 
@@ -20,11 +20,13 @@ GDS recommends using Long Term Support (LTS) versions as the default choice for 
 
 You must make sure these backports and other sources receive regular and timely security updates. This should be less of a burden than having to update the OS on VMs every 6 to 9 months.
 
-If you do use standard Ubuntu, it is essential to migrate to the latest release within 3 months to ensure you stay within the support period and receive security updates. This must be considered carefully when proposing adopting standard Ubuntu releases as it can affect the stability of your running service. Standard releases only receive security updates for 9 months after their initial release. LTS receives support for 5 years, or longer with paid-for extended support.
+If you do use standard Ubuntu, you must migrate to the latest release within 3 months to ensure you stay within the support period and receive security updates. You must consider this carefully when proposing adopting standard Ubuntu releases as it can affect the stability of your running service. 
+    
+Standard releases only receive security updates for 9 months after their initial release. LTS receives support for 5 years, or longer with paid-for extended support.
 
 ## Hardening
 
-You must apply hardening to your VM. For example, you should only use SSH keys that are protected by a passphrase to access VMs. You should disable root SSH access and SSH access using a password.
+You must apply hardening to your operating system. For example, you should disable root SSH access and deny SSH access using a password.
 
 You must also make sure your OS is:
 
